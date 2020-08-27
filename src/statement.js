@@ -7,21 +7,24 @@ function statement(invoice, plays) {
     currency: 'USD',
     minimumFractionDigits: 2,
   }).format;
+
+  function calculateAmount(thisAmount, perf, boundary, unitIncrease, startingNumber = 0) {
+    if (perf.audience > boundary) {
+      thisAmount += startingNumber + unitIncrease * (perf.audience - boundary);
+    }
+    return thisAmount;
+  }
+
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     let thisAmount = 0;
     switch (play.type) {
       case 'tragedy':
-        thisAmount = 40000;
-        if (perf.audience > 30) {
-          thisAmount += 1000 * (perf.audience - 30);
-        }
+        thisAmount = calculateAmount(40000, perf, 30, 1000);
         break;
       case 'comedy':
         thisAmount = 30000;
-        if (perf.audience > 20) {
-          thisAmount += 10000 + 500 * (perf.audience - 20);
-        }
+        thisAmount = calculateAmount(30000, perf, 20, 500, 10000);
         thisAmount += 300 * perf.audience;
         break;
       default:
