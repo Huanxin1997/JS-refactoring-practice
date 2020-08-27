@@ -25,7 +25,6 @@ function getThisAmount(thisAmount, play, perf) {
       thisAmount = calculateAmount(40000, perf, 30, 1000);
       break;
     case 'comedy':
-      thisAmount = 30000;
       thisAmount = calculateAmount(30000, perf, 20, 500, 10000);
       thisAmount += 300 * perf.audience;
       break;
