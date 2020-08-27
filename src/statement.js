@@ -76,16 +76,22 @@ function generateHTMLResult(performances, plays) {
     return {totalAmount, resultMsg, volumeCredits};
 }
 
+function getHTMLResult(invoice, plays) {
+  let result = `<h1>Statement for ${invoice.customer}</h1>\n<table>\n<tr><th>play</th><th>seats</th><th>cost</th></tr>`;
+  let {totalAmount, resultMsg, volumeCredits} = generateHTMLResult(invoice.performances, plays);
+
+  result += resultMsg;
+  result += `</table>\n<p>Amount owed is <em>${format(totalAmount)}</em></p>\n<p>You earned <em>${volumeCredits}</em> credits</p>\n`;
+
+  return result;
+}
+
 function statement(invoice, plays) {
     return getStatement(invoice, plays);
 }
 
 function statementHtml(invoice, plays) {
-    let result = `<h1>Statement for ${invoice.customer}</h1>\n<table>\n<tr><th>play</th><th>seats</th><th>cost</th></tr>`;
-    let {totalAmount, resultMsg, volumeCredits} = generateHTMLResult(invoice.performances, plays);
-    result += resultMsg;
-    result += `</table>\n<p>Amount owed is <em>${format(totalAmount)}</em></p>\n<p>You earned <em>${volumeCredits}</em> credits</p>\n`;
-    return result;
+    return getHTMLResult(invoice, plays);
 }
 
 module.exports = {
