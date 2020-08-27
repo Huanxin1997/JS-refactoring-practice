@@ -58,15 +58,38 @@ function generateResult(resultMsg, totalAmount, volumeCredits, customer) {
 }
 
 function getStatement(invoice, plays) {
-    let {resultMsg, totalAmount, volumeCredits} = handlePermances(invoice.performances, plays);
+    let {totalAmount, volumeCredits, resultMsg} = handlePermances(invoice.performances, plays);
     let result = generateResult(resultMsg, totalAmount, volumeCredits, invoice.customer);
     return result;
+}
+
+function generateHTMLResult(performances, plays) {
+    let resultMsg = "";
+    let {totalAmount, volumeCredits} = handlePermances(performances, plays);
+
+    for (let perf of performances) {
+        let thisAmount = 0;
+        const play = plays[perf.playID];
+        thisAmount = getThisAmount(thisAmount, play, perf);
+        resultMsg += ` <tr><td>${play.name}</td><td>${perf.audience}</td><td>${format(thisAmount)}</td></tr>\n`;
+    }
+
+    return {totalAmount, resultMsg, volumeCredits};
 }
 
 function statement(invoice, plays) {
     return getStatement(invoice, plays);
 }
 
+function statementHtml(invoice, plays) {
+    let result = `<h1>Statement for ${invoice.customer}</h1>\n<table>\n<tr><th>play</th><th>seats</th><th>cost</th></tr>`;
+    let {totalAmount, resultMsg, volumeCredits} = generateHTMLResult(invoice.performances, plays);
+    result += resultMsg;
+    result += `</table>\n<p>Amount owed is <em>${format(totalAmount)}</em></p>\n<p>You earned <em>${volumeCredits}</em> credits</p>\n`;
+    return result;
+}
+
 module.exports = {
     statement,
+    statementHtml
 };
