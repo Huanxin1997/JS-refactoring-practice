@@ -59,12 +59,14 @@ function generateResult(resultMsg, totalAmount, volumeCredits, customer) {
   return result;
 }
 
-function statement(invoice, plays) {
+function getStatement(invoice, plays) {
   let {resultMsg, totalAmount, volumeCredits} = handlePermances(invoice.performances, plays);
-
   let result = generateResult(resultMsg, totalAmount, volumeCredits, invoice.customer);
+  return result;
+}
 
-  return result
+function statement(invoice, plays) {
+  return getStatement(invoice, plays);
 }
 
 module.exports = {
