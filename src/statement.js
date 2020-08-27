@@ -1,3 +1,10 @@
+function calculateAmount(thisAmount, perf, boundary, unitIncrease, startingNumber = 0) {
+  if (perf.audience > boundary) {
+    thisAmount += startingNumber + unitIncrease * (perf.audience - boundary);
+  }
+  return thisAmount;
+}
+
 function statement(invoice, plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
@@ -8,18 +15,9 @@ function statement(invoice, plays) {
     minimumFractionDigits: 2,
   }).format;
 
-  function calculateAmount(thisAmount, perf, boundary, unitIncrease, startingNumber = 0) {
-    if (perf.audience > boundary) {
-      thisAmount += startingNumber + unitIncrease * (perf.audience - boundary);
-    }
-    return thisAmount;
-  }
-
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     let thisAmount = 0;
-    // add volume credits
-    volumeCredits += Math.max(perf.audience - 30, 0);
     switch (play.type) {
       case 'tragedy':
         thisAmount = calculateAmount(40000, perf, 30, 1000);
@@ -28,11 +26,14 @@ function statement(invoice, plays) {
         thisAmount = 30000;
         thisAmount = calculateAmount(30000, perf, 20, 500, 10000);
         thisAmount += 300 * perf.audience;
-        volumeCredits += Math.floor(perf.audience / 5);
         break;
       default:
         throw new Error(`unknown type: ${play.type}`);
     }
+    // add volume credits
+    volumeCredits += Math.max(perf.audience - 30, 0);
+    // add extra credit for every ten comedy attendees
+    if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
     //print line for this order
     result += ` ${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
