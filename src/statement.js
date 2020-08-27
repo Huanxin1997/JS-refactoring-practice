@@ -51,15 +51,20 @@ function handlePermances(performances, plays) {
   return {totalAmount, resultMsg, volumeCredits};
 }
 
-function statement(invoice, plays) {
-  let result = `Statement for ${invoice.customer}\n`;
-
-  let {resultMsg, totalAmount, volumeCredits} = handlePermances(invoice.performances, plays);
-
+function generateResult(resultMsg, totalAmount, volumeCredits, customer) {
+  let result = `Statement for ${customer}\n`;
   result += resultMsg;
   result += `Amount owed is ${format(totalAmount)}\n`;
   result += `You earned ${volumeCredits} credits \n`;
   return result;
+}
+
+function statement(invoice, plays) {
+  let {resultMsg, totalAmount, volumeCredits} = handlePermances(invoice.performances, plays);
+
+  let result = generateResult(resultMsg, totalAmount, volumeCredits, invoice.customer);
+
+  return result
 }
 
 module.exports = {
