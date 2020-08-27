@@ -19,6 +19,22 @@ function getVolumeCredits(volumeCredits, perf, play) {
   return volumeCredits;
 }
 
+function getThisAmount(thisAmount, play, perf) {
+  switch (play.type) {
+    case 'tragedy':
+      thisAmount = calculateAmount(40000, perf, 30, 1000);
+      break;
+    case 'comedy':
+      thisAmount = 30000;
+      thisAmount = calculateAmount(30000, perf, 20, 500, 10000);
+      thisAmount += 300 * perf.audience;
+      break;
+    default:
+      throw new Error(`unknown type: ${play.type}`);
+  }
+  return thisAmount;
+}
+
 function statement(invoice, plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
@@ -27,18 +43,7 @@ function statement(invoice, plays) {
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     let thisAmount = 0;
-    switch (play.type) {
-      case 'tragedy':
-        thisAmount = calculateAmount(40000, perf, 30, 1000);
-        break;
-      case 'comedy':
-        thisAmount = 30000;
-        thisAmount = calculateAmount(30000, perf, 20, 500, 10000);
-        thisAmount += 300 * perf.audience;
-        break;
-      default:
-        throw new Error(`unknown type: ${play.type}`);
-    }
+    thisAmount = getThisAmount(thisAmount, play, perf);
     volumeCredits = getVolumeCredits(volumeCredits, perf, play)
     //print line for this order
     result += ` ${play.name}: ${format(thisAmount)} (${perf.audience} seats)\n`;
