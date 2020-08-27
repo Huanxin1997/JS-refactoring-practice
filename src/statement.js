@@ -66,7 +66,6 @@ function getStatement(invoice, plays) {
 function generateHTMLResult(performances, plays) {
     let resultMsg = "";
     let {totalAmount, volumeCredits} = handlePermances(performances, plays);
-
     for (let perf of performances) {
         let thisAmount = 0;
         const play = plays[perf.playID];
