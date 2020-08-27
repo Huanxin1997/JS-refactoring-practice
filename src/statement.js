@@ -35,20 +35,28 @@ function getThisAmount(thisAmount, play, perf) {
   return thisAmount;
 }
 
-function statement(invoice, plays) {
+function handlePermances(performances, plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`;
-
-  for (let perf of invoice.performances) {
+  let resultMsg = "";
+  for (let perf of performances) {
     const play = plays[perf.playID];
     let thisAmount = 0;
     thisAmount = getThisAmount(thisAmount, play, perf);
     volumeCredits = getVolumeCredits(volumeCredits, perf, play)
     //print line for this order
-    result += ` ${play.name}: ${format(thisAmount)} (${perf.audience} seats)\n`;
+    resultMsg += ` ${play.name}: ${format(thisAmount)} (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
   }
+  return {totalAmount, resultMsg, volumeCredits};
+}
+
+function statement(invoice, plays) {
+  let result = `Statement for ${invoice.customer}\n`;
+
+  let {resultMsg, totalAmount, volumeCredits} = handlePermances(invoice.performances, plays);
+
+  result += resultMsg;
   result += `Amount owed is ${format(totalAmount)}\n`;
   result += `You earned ${volumeCredits} credits \n`;
   return result;
